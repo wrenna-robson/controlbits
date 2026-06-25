@@ -152,7 +152,7 @@ section Nat
 
 lemma fastCycleMin_apply_zero {π : Perm ℕ} : FastCycleMin i π 0 = 0 := by
   rw [fastCycleMin_eq_self_iff]
-  exact zero_le _
+  exact zero_le
 
 end Nat
 
@@ -179,7 +179,7 @@ lemma cycleMin_eq_cycleMin_apply : CycleMin π x = CycleMin π (π x) := by
   rw [sameCycle_apply_left]
 
 lemma cycleMin_eq_cycleMin_apply_inv : CycleMin π x = CycleMin π (π⁻¹ x) := by
-rw [cycleMin_eq_cycleMin_apply (x := (π⁻¹ x)), coe_inv, apply_symm_apply]
+  rw [cycleMin_eq_cycleMin_apply (x := (π⁻¹ x)), coe_inv, apply_symm_apply]
 
 end InfSet
 
@@ -314,7 +314,7 @@ end ConditionallyCompleteLinearOrderBot
 
 @[simp]
 lemma _root_.Nat.cycleMin_zero {π : Perm ℕ} : CycleMin π (0 : ℕ) = 0 :=
-le_antisymm cycleMin_le_self (zero_le _)
+le_antisymm cycleMin_le_self zero_le
 
 @[simp]
 lemma _root_.Fin.cycleMin_zero {m : ℕ} [NeZero m] {τ : Equiv.Perm (Fin m)} :

@@ -37,6 +37,7 @@ lemma perm_fin_two_of_unfix_one {π : Equiv.Perm (Fin 2)} (h : π 1 = 0) : π = 
   rw [perm_fin_two π, ← perm_fin_two_apply_apply (π := π) (q := 1)]
   simp_rw [h, ite_true]
 
+open scoped commutatorElement in
 lemma cmtr_fin_two {x y : Equiv.Perm (Fin 2)} : ⁅x, y⁆ = 1 := by
   rw [perm_fin_two x, perm_fin_two y]
   by_cases h : (x 0 = 1)
