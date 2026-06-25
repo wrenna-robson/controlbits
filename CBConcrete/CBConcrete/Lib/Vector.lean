@@ -37,7 +37,7 @@ theorem getElem_eraseIdx_right (v : Vector α n) (hki : i ≤ k) (hk : k < n - 1
   simp_rw [getElem_eraseIdx, dif_neg hki.not_gt]
 
 @[simp] theorem getElem_eraseIdx_zero (v : Vector α n) (hk : k < n - 1) :
-    (v.eraseIdx 0)[k] = v[k + 1] := getElem_eraseIdx_right _ (zero_le _) _
+    (v.eraseIdx 0)[k] = v[k + 1] := getElem_eraseIdx_right _ zero_le _
 
 @[simp] theorem getElem_tail' (v : Vector α (n + 1)) (hi : i < (n + 1) - 1) :
     @getElem (Vector α n) Nat α (fun _ i => i < n) instGetElemNatLt v.tail i hi = v[i + 1] :=
@@ -105,39 +105,18 @@ theorem bswapIfInBounds_false {xs : Vector α n} {i j : Nat} :
 
 theorem back_push {v : Vector α n} {a : α} : (v.push a).back = a := by grind
 
-@[elab_as_elim, induction_eliminator, grind =]
+@[elab_as_elim, induction_eliminator]
 def induction {C : ∀ {n : ℕ}, Vector α n → Sort*} (empty : C #v[])
     (push : ∀ (n : ℕ) (xs : Vector α n) (x : α), C xs → C (xs.push x)) :
     {n : ℕ} → (xs : Vector α n) → C xs
   | 0, xs => xs.eq_empty ▸ empty
-  | _ + 1, xs => xs.push_pop_back ▸ push _ _ _ (induction empty push _)
-
-@[simp]
-theorem induction_empty {C : ∀ {n : ℕ}, Vector α n → Sort*} (empty : C #v[])
-    (push : ∀ (n : ℕ) (xs : Vector α n) (x : α), C xs → C (xs.push x)) :
-  induction empty push #v[] = empty := by grind
-
-@[simp]
-theorem induction_push {C : ∀ {n : ℕ}, Vector α n → Sort*} (empty : C #v[])
-    (push : ∀ (n : ℕ) (xs : Vector α n) (x : α), C xs → C (xs.push x)) (xs : Vector α n) (x : α) :
-    induction empty push (xs.push x) = push ((n + 1) - 1) xs x (induction empty push xs) := by
-  grind [pop_push]
+  | n + 1, xs => xs.push_pop_back ▸ push (n + 1 - 1) xs.pop xs.back (induction empty push _)
 
 @[elab_as_elim, cases_eliminator, grind =]
 def cases {C : ∀ {n : ℕ}, Vector α n → Sort*}
     (empty : C #v[])
     (push : ∀ (n : ℕ) (xs : Vector α n) (x : α), C (xs.push x))
     {n : ℕ} (v : Vector α n) : C v := v.induction empty (fun _ _ _ _ => push _ _ _)
-
-@[simp]
-theorem cases_empty {C : ∀ {n : ℕ}, Vector α n → Sort*} (empty : C #v[])
-    (push : ∀ (n : ℕ) (xs : Vector α n) (x : α), C (xs.push x)) :
-  cases empty push #v[] = empty := by grind
-
-@[simp]
-theorem cases_push {C : ∀ {n : ℕ}, Vector α n → Sort*} (empty : C #v[])
-    (push : ∀ (n : ℕ) (xs : Vector α n) (x : α), C (xs.push x)) (xs : Vector α n) (x : α) :
-    cases empty push (xs.push x) = push ((n + 1) - 1) xs x := by grind [pop_push]
 
 theorem exists_getElem_push (f : α → Prop) {c : Vector α n} (b : α) {k : Nat} :
     (∃ (hk : k < n + 1), f (c.push b)[k]) ↔ k = n ∧ f b ∨ ∃ (hk : k < n), f c[k] := by grind

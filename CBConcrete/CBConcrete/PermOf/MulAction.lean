@@ -330,7 +330,7 @@ lemma le_getElem_cycleMin_iff (a : PermOf n) (i : ℕ) {x y : ℕ}
 
 theorem getElem_zero_cycleMinVector [NeZero n]
     {a : PermOf n} {k : ℕ} : (a.CycleMinVector k)[0]'(NeZero.pos _) = 0 :=
-  getElem_cycleMinVector_of_self_le_getElem (fun _ => zero_le _)
+  getElem_cycleMinVector_of_self_le_getElem (fun _ => zero_le)
 
 lemma getElem_cycleMinVector_eq_min'_cycleOf (a : PermOf n) {i : ℕ} {x : ℕ}
       (hai : MulAction.period a x ≤ 2 ^ i) (hx : x < n) :

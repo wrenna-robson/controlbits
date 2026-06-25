@@ -1,9 +1,10 @@
 import CBConcrete.PermOf.Basic
 import Mathlib.Algebra.Group.Action.End
 import Mathlib.Algebra.Group.Subgroup.Ker
-import Mathlib.Data.Nat.Lattice
+import Mathlib.Order.Lattice.Nat
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.SetTheory.Cardinal.Finite
+set_option linter.style.header false
 namespace Equiv
 
 variable {α β : Type*}
@@ -361,7 +362,7 @@ end PushEq
 def popOfEq {n : ℕ} (a : PermOf (n + 1)) (ha : a[n] = n) : PermOf n where
   toVector := a.toVector.pop
   invVector := a.invVector.pop
-  getElem_invVector_getElem_toVector := by grind
+  getElem_invVector_getElem_toVector := by grind [Vector.getElem_pop']
 
 section PopOfEq
 
@@ -1049,6 +1050,7 @@ theorem minPerm_succ {a : PermOf (n + 1)} :
 theorem minPerm_smul {a : PermOf n} {i : ℕ} : a.minPerm • i = a • i := by
   induction n with | zero => _ | succ n IH => _
   · simp_rw [minPerm_zero, Unique.eq_default, default_eq]
+    rfl
   · simp_rw [minPerm_succ]
     split_ifs
     · simp_rw [cast_smul, IH, popOfEq_smul]
@@ -1148,6 +1150,7 @@ theorem minPerm_eq_one_iff_eq_one {a : PermOf n} : a.minPerm = 1 ↔ a = 1 :=
 @[simp] theorem minLen_minPerm {a : PermOf n} : a.minPerm.minLen = a.minLen := by
   induction n with | zero => _ | succ n IH => _
   · simp_rw [minPerm_zero, Unique.eq_default, Unique.default_eq (1 : PermOf 0)]
+    rfl
   · by_cases ha : a[n] = n
     · simp_rw [minPerm_succ_of_getElem_eq ha, minLen_cast, IH, minLen_popOfEq]
     · simp_rw [minPerm_succ_of_getElem_ne ha, minLen_cast]
@@ -1287,7 +1290,8 @@ theorem smul_ofPermOf : a.ofPermOf • i = a • i := minPerm_smul
 @[simp]
 theorem toPermOf_ofPermOf {a : FinitePerm} : a.toPermOf.ofPermOf = a := by
   ext
-  simp_rw [ofPermOf_apply_toPermOf, minPerm_isCongr]
+  simp_rw [ofPermOf_apply_toPermOf]
+  exact minPerm_isCongr
 
 theorem ofPermOf_len_le : a.ofPermOf.len ≤ n := minLen_le
 
@@ -1296,8 +1300,8 @@ theorem IsCongr.ofPermOf (hab : a.IsCongr b) : a.ofPermOf = b.ofPermOf := by
   exact hab.minPerm_minPerm
 
 theorem ofPermOf_eq_iff_isCongr : a.ofPermOf = b.ofPermOf ↔ a.IsCongr b :=
-  ⟨by simp_rw [FinitePerm.ext_iff, ofPermOf_apply_toPermOf, isCongr_minPerm_minPerm,
-    imp_self], IsCongr.ofPermOf⟩
+  ⟨by simp_rw [FinitePerm.ext_iff, ofPermOf_apply_toPermOf]; exact isCongr_minPerm_minPerm.mp,
+    IsCongr.ofPermOf⟩
 
 theorem ofPermOf_inj {b : PermOf n} : a.ofPermOf = b.ofPermOf ↔ a = b := by
   simp_rw [ofPermOf_eq_iff_isCongr, isCongr_iff_eq]

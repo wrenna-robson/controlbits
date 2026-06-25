@@ -462,8 +462,9 @@ theorem condFlipBitIndices_succ {v : Vector α n} {i : ℕ} {c : Vector Bool (l 
     (condFlipBitIndices v i c.pop).swap
     (l.insertBit false i) (l.insertBit true i)
     (Nat.insertBit_false_le_insertBit_true.trans_lt h.1) else condFlipBitIndices v i c.pop := by
-  convert condFlipBitIndices_push
-  exact c.push_pop_back.symm
+  rw [c.push_pop_back.symm]
+  refine condFlipBitIndices_push.trans ?_
+  simp only [add_tsub_cancel_right, back_succ, Nat.add_one_sub_one, getElem_push_eq, pop_push]
 
 @[grind =]
 theorem getElem_condFlipBitIndices {v : Vector α n} {c : Vector Bool l}
@@ -1018,12 +1019,14 @@ theorem flipBitCommutator_inv_eq_flipBitVals_mul_flipBitVals :
   rw [flipBitCommutator_eq_flipBitIndices_mul_flipBitVals_inv,
     one_flipBitIndices, one_flipBitVals, flipBit_inv, flipBit_mul_self]
 
+open scoped commutatorElement
 theorem flipBitCommutator_eq_commutatorElement :
     (a.flipBitCommutator i) = ⁅a, flipBit i⁆ := by
   simp_rw [flipBitCommutator_eq_flipBitIndices_mul_flipBitVals_inv,
   commutatorElement_def, flipBitIndices_eq_mul_flipBit, flipBitVals_eq_flipBit_mul,
   mul_inv_rev, mul_assoc]
 
+open scoped commutatorElement
 theorem flipBitCommutator_inv_eq_commutatorElement :
     (a.flipBitCommutator i)⁻¹ = ⁅(flipBit i : PermOf n), a⁆ := by
   rw [flipBitCommutator_eq_commutatorElement, commutatorElement_inv]

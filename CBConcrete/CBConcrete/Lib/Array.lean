@@ -56,7 +56,7 @@ theorem getElem_eraseIdx_right {xs : Array α} (hi : i < xs.size) (hki : i ≤ k
     (hk : k < (xs.eraseIdx 0).size) :
     (xs.eraseIdx 0)[k] = xs[k + 1]'
     (Nat.succ_lt_of_lt_pred (hk.trans_eq (xs.size_eraseIdx _ _))) :=
-  getElem_eraseIdx_right _ (zero_le _) _
+  getElem_eraseIdx_right _ zero_le _
 
 @[simp, grind =]
 theorem swap_same {xs : Array α} {i : Nat} {hi} : xs.swap i i hi hi = xs := by grind
@@ -124,43 +124,6 @@ theorem eq_push_pop_back_of_size_ne_zero {xs : Array α} (h : xs.size ≠ 0) :
     xs = xs.pop.push (xs.back <| Nat.pos_of_ne_zero h) := by grind
 
 theorem back_push {v : Array α} {a : α} : (v.push a).back = a := by grind
-
-@[elab_as_elim, induction_eliminator, grind =]
-def induction {C : Array α → Sort*} (empty : C #[])
-    (push : ∀ (xs : Array α) (x : α), C xs → C (xs.push x))
-    (xs : Array α) : C xs :=
-  match hxs : xs.size with
-  | 0 => eq_empty_of_size_eq_zero hxs ▸ empty
-  | n + 1 => eq_push_pop_back_of_size_ne_zero
-    (hxs ▸ Nat.succ_ne_zero _) ▸ push _ _ (induction empty push xs.pop)
-  termination_by xs.size
-
-@[simp]
-theorem induction_empty {C : Array α → Sort*} (empty : C #[])
-    (push : ∀ (xs : Array α) (x : α), C xs → C (xs.push x)) :
-  induction empty push #[] = empty := by grind
-
-@[simp]
-theorem induction_push {C : Array α → Sort*} (empty : C #[])
-    (push : ∀ (xs : Array α) (x : α), C xs → C (xs.push x)) (xs : Array α) (x : α) :
-    induction empty push (xs.push x) = push xs x (induction empty push xs) := by
-  grind [pop_push]
-
-@[elab_as_elim, cases_eliminator, grind =]
-def cases {C : Array α → Sort*}
-    (empty : C #[])
-    (push : ∀ (xs : Array α) (x : α), C (xs.push x)) (v : Array α) : C v :=
-  v.induction empty (fun _ _  _ => push _ _)
-
-@[simp]
-theorem cases_empty {C : Array α → Sort*} (empty : C #[])
-    (push : ∀ (xs : Array α) (x : α), C (xs.push x)) :
-  cases empty push #[] = empty := by grind
-
-@[simp]
-theorem cases_push {C : Array α → Sort*} (empty : C #[])
-    (push : ∀ (xs : Array α) (x : α), C (xs.push x)) (xs : Array α) (x : α) :
-    cases empty push (xs.push x) = push xs x := by grind [pop_push]
 
 theorem exists_getElem_push (p : α → Prop) {c : Array α} (b : α) {k : Nat} :
     (∃ (hk : k < (c.push b).size), p (c.push b)[k]) ↔

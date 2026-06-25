@@ -1,5 +1,5 @@
 import CBConcrete.Flipbit
-
+set_option linter.style.header false
 namespace PermOf
 
 variable {n i p k : ℕ} {a : PermOf (2 ^ (n + 1))}
@@ -68,7 +68,7 @@ theorem leftLayer_eq_of_bitInvariant_lt {a : PermOf (2 ^ (n + 1))}
 
 theorem getElem_zero_leftLayer_zero :
     (leftLayer a 0)[0] = false := getElem_leftLayer_of_lt_of_bitInvariant_lt
-      (by simp only [not_lt_zero', IsEmpty.forall_iff, implies_true]) (Nat.two_pow_pos _)
+      (by simp only [not_lt_zero, IsEmpty.forall_iff, implies_true]) (Nat.two_pow_pos _)
 
 end LeftLayer
 
@@ -283,7 +283,7 @@ theorem leftPerm_mul_middlePerm_mul_rightPerm :
 @[simp] theorem bitInvariant_middlePerm_zero :
     (middlePerm a 0).BitInvariant 0 :=
   bitInvariant_middlePerm
-    (by simp_rw [not_lt_zero', IsEmpty.forall_iff, implies_true]) _ zero_lt_one
+    (by simp_rw [not_lt_zero, IsEmpty.forall_iff, implies_true]) _ zero_lt_one
 
 theorem bitInvariant_middlePerm_of_gt {i : ℕ} {j : ℕ} (hj : n < j) :
   (middlePerm a i).BitInvariant j := bitInvariant_of_ge (Nat.pow_le_pow_of_le one_lt_two hj)
@@ -379,7 +379,7 @@ def middlePermIth (a : PermOf (2 ^ (n + 1))) (i : ℕ) : PermOf (2 ^ (n + 1)) :=
 @[simp] theorem middlePermIth_bitInvariant :
     ∀ j < i, (a.middlePermIth i).BitInvariant j := by
   induction i generalizing a with | zero => _ | succ i IH => _
-  · simp_rw [not_lt_zero', IsEmpty.forall_iff, implies_true]
+  · simp_rw [not_lt_zero, IsEmpty.forall_iff, implies_true]
   · simp_rw [middlePermIth_succ]
     exact bitInvariant_middlePerm IH
 

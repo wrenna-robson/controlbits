@@ -35,7 +35,7 @@ theorem bitInvariant_of_ge_of_ge (h : n ≤ 2 ^ i) (hk : i ≤ k) : a.BitInvaria
 theorem bitInvariant_lt_of_lt_iff_testBit_getElem_eq_testBit_of_lt : (∀ k < i, a.BitInvariant k) ↔
     (∀ {x : ℕ} (h : x < n), ∀ k < i, a[x].testBit k = x.testBit k) := by
   simp_rw [bitInvariant_iff_testBit_getElem_eq_testBit]
-  exact forall₂_swap
+  exact forall₂_comm
 
 theorem bitInvariant_lt_of_lt_iff_getElem_mod_two_pow_eq_mod_two_pow : (∀ k < i, a.BitInvariant k) ↔
     ∀ {x} (h : x < n), a[x] % 2 ^ i = x % 2 ^ i := by
